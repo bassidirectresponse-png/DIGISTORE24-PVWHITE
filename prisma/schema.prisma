@@ -68,6 +68,8 @@ model Project {
   netlifyUrl      String?
   netlifyDeployId String?
 
+  templateVariant String?  // editorial | swiss | dark | organic — null = auto-pick
+
   status          String   @default("draft")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

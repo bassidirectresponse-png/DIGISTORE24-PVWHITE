@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PageCopySchema, type PageCopy } from "@/lib/schemas";
+import { pickVariantForProject } from "@/lib/page-templates";
 import { ProjectEditor } from "@/components/app/ProjectEditor";
 
 export default async function ProjectPage({
@@ -31,6 +32,12 @@ export default async function ProjectPage({
     if (result.success) parsedCopy = result.data;
   }
 
+  const resolvedVariant = pickVariantForProject({
+    id: project.id,
+    niche: project.niche,
+    templateVariant: project.templateVariant,
+  });
+
   return (
     <ProjectEditor
       project={{
@@ -40,6 +47,8 @@ export default async function ProjectPage({
         language: project.language,
         status: project.status,
         netlifyUrl: project.netlifyUrl,
+        templateVariant: project.templateVariant,
+        resolvedVariant,
       }}
       initialCopy={parsedCopy}
       hasHtml={!!project.generatedHtml}

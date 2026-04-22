@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUserId } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { generatePageCopy, regenerateBlock } from "@/lib/ai";
-import { renderHtml } from "@/lib/html-template";
+import { renderHtml, VARIANT_IDS, type VariantId } from "@/lib/html-template";
 import { buildLegalTexts } from "@/lib/legal-templates";
 import { PageCopySchema, type PageCopy } from "@/lib/schemas";
 import { deployToNetlify } from "@/lib/netlify";
@@ -193,6 +193,33 @@ export async function deployToNetlifyAction(
     return {
       ok: false,
       error: err instanceof Error ? err.message : "Falha no deploy",
+    };
+  }
+}
+
+export async function setTemplateVariantAction(
+  projectId: string,
+  variant: VariantId | null
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    const userId = await requireUserId();
+    if (variant !== null && !(VARIANT_IDS as readonly string[]).includes(variant)) {
+      return { ok: false, error: "Variante inválida" };
+    }
+    const project = await db.project.findFirst({
+      where: { id: projectId, userId },
+    });
+    if (!project) return { ok: false, error: "Projeto não encontrado" };
+    await db.project.update({
+      where: { id: projectId },
+      data: { templateVariant: variant },
+    });
+    revalidatePath(`/project/${projectId}`);
+    return { ok: true };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Erro ao trocar variante",
     };
   }
 }

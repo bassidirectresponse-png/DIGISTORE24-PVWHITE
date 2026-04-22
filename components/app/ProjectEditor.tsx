@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, Sparkles, Loader2 } from "lucide-react";
 import { CopyEditor } from "./CopyEditor";
 import { HtmlPreview } from "./HtmlPreview";
+import { VariantPicker } from "./VariantPicker";
 import type { PageCopy } from "@/lib/schemas";
+import type { VariantId } from "@/lib/page-templates";
 import { generateAction } from "@/app/(app)/project/[id]/actions";
 
 interface Props {
@@ -19,6 +21,8 @@ interface Props {
     language: string;
     status: string;
     netlifyUrl: string | null;
+    templateVariant: string | null;
+    resolvedVariant: VariantId;
   };
   initialCopy: PageCopy | null;
   hasHtml: boolean;
@@ -57,7 +61,7 @@ export function ProjectEditor({
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="border-b bg-white px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+      <header className="border-b bg-white px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <Button asChild variant="ghost" size="icon">
             <Link href="/dashboard">
@@ -72,17 +76,24 @@ export function ProjectEditor({
             </p>
           </div>
         </div>
-        {generating ? (
-          <span className="text-xs text-indigo-600 inline-flex items-center gap-1">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            gerando...
-          </span>
-        ) : !copy ? (
-          <span className="text-xs text-slate-400 inline-flex items-center gap-1">
-            <Sparkles className="h-3.5 w-3.5" />
-            rascunho
-          </span>
-        ) : null}
+        <div className="flex items-center gap-4">
+          <VariantPicker
+            projectId={project.id}
+            override={project.templateVariant}
+            resolved={project.resolvedVariant}
+          />
+          {generating ? (
+            <span className="text-xs text-indigo-600 inline-flex items-center gap-1">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              gerando...
+            </span>
+          ) : !copy ? (
+            <span className="text-xs text-slate-400 inline-flex items-center gap-1">
+              <Sparkles className="h-3.5 w-3.5" />
+              rascunho
+            </span>
+          ) : null}
+        </div>
       </header>
 
       <div className="flex-1 grid md:grid-cols-[minmax(380px,2fr)_3fr] overflow-hidden">
