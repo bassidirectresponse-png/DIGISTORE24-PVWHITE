@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  passwordHash   String
+  name           String?
+  netlifyToken   String?
+  createdAt      DateTime        @default(now())
+  companyProfile CompanyProfile?
+  projects       Project[]
+}
+
+model CompanyProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  legalName         String
+  tradingName       String?
+  taxIdType         String
+  taxIdNumber       String
+  vatNumber         String?
+
+  addressStreet     String
+  addressNumber     String
+  addressComplement String?
+  addressDistrict   String
+  addressCity       String
+  addressState      String?
+  addressZip        String
+  addressCountry    String
+
+  contactEmail      String
+  contactPhone      String?
+  supportEmail      String?
+
+  legalRepName      String
+
+  updatedAt         DateTime @updatedAt
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productName     String
+  niche           String
+  language        String
+  briefSummary    String
+  priceGross      Float
+  currency        String
+  guaranteeDays   Int
+  hasUpsell       Boolean  @default(false)
+  hasSubscription Boolean  @default(false)
+  checkoutUrl     String?
+
+  generatedCopy   String?
+  generatedHtml   String?
+  netlifyUrl      String?
+  netlifyDeployId String?
+
+  status          String   @default("draft")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
