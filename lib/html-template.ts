@@ -94,29 +94,18 @@ ${modals}
 function heroSection(c: PageCopy, ctaUrl: string, L: Labels): string {
   return `
 <section class="dsf-hero">
-  <div class="dsf-wrap dsf-hero-grid">
-    <div class="dsf-hero-left">
-      <div class="dsf-label">${escapeHtml(c.hero.eyebrow)}</div>
-      <h1 class="dsf-display dsf-hero-headline">${escapeHtml(c.hero.headline)}</h1>
-      <p class="dsf-prose dsf-hero-sub">${escapeHtml(c.hero.subheadline)}</p>
-      <div class="dsf-hero-ctarow">
-        <a href="${escapeAttr(ctaUrl)}" class="dsf-btn dsf-btn-primary">
-          ${escapeHtml(c.hero.ctaLabel)}
-          ${SVG_ARROW}
-        </a>
-        <div class="dsf-trust">
-          ${SVG_LOCK}
-          <span>${escapeHtml(c.offer.digistoreNote || L.securePayment)}</span>
-        </div>
-      </div>
-    </div>
-    <div class="dsf-hero-right">
-      <div class="dsf-hero-aside">
-        <div class="dsf-label dsf-hero-asidelabel">${escapeHtml(L.reviewedBy)}</div>
-        <div class="dsf-hero-asidebrand">Digistore<span>24</span></div>
-        <div class="dsf-hero-asidemeta">
-          ${L.officialReseller}
-        </div>
+  <div class="dsf-wrap">
+    <div class="dsf-label">${escapeHtml(c.hero.eyebrow)}</div>
+    <h1 class="dsf-display dsf-hero-headline">${escapeHtml(c.hero.headline)}</h1>
+    <p class="dsf-prose dsf-hero-sub">${escapeHtml(c.hero.subheadline)}</p>
+    <div class="dsf-hero-ctarow">
+      <a href="${escapeAttr(ctaUrl)}" class="dsf-btn dsf-btn-primary">
+        ${escapeHtml(c.hero.ctaLabel)}
+        ${SVG_ARROW}
+      </a>
+      <div class="dsf-trust">
+        ${SVG_LOCK}
+        <span>${escapeHtml(c.offer.digistoreNote || L.securePayment)}</span>
       </div>
     </div>
   </div>
@@ -480,21 +469,13 @@ function scopedCss(): string {
 .dsf-icon-sm { opacity: 0.7; }
 
 /* ---------- Hero ---------- */
-.dsf-hero { padding: 112px 0 88px; background: var(--dsf-cream); border-top: none; }
-.dsf-hero-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 72px; align-items: end; }
-.dsf-hero-left .dsf-label { margin-bottom: 40px; }
-.dsf-hero-headline { font-size: clamp(48px, 7.2vw, 104px); margin: 0 0 32px; max-width: 14ch; }
-.dsf-hero-sub { font-size: 20px; line-height: 1.6; max-width: 54ch; color: var(--dsf-ink-2); margin: 0 0 48px; }
+.dsf-hero { padding: 120px 0 96px; background: var(--dsf-cream); border-top: none; }
+.dsf-hero .dsf-label { margin-bottom: 40px; }
+.dsf-hero-headline { font-size: clamp(48px, 7.6vw, 112px); margin: 0 0 36px; max-width: 16ch; }
+.dsf-hero-sub { font-size: 21px; line-height: 1.6; max-width: 56ch; color: var(--dsf-ink-2); margin: 0 0 56px; }
 .dsf-hero-ctarow { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
 .dsf-trust { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: 0.03em; color: var(--dsf-muted); }
 .dsf-trust-center { justify-content: center; margin-top: 24px; }
-
-.dsf-hero-right { display: flex; justify-content: flex-end; }
-.dsf-hero-aside { border: 1px solid var(--dsf-rule); padding: 28px 32px; background: #fff; max-width: 280px; }
-.dsf-hero-asidelabel { margin-bottom: 12px; display: block; }
-.dsf-hero-asidebrand { font-family: 'Instrument Serif', serif; font-size: 32px; line-height: 1; color: var(--dsf-ink); letter-spacing: -0.01em; }
-.dsf-hero-asidebrand span { color: var(--dsf-accent); font-style: italic; }
-.dsf-hero-asidemeta { font-size: 12px; color: var(--dsf-muted); margin-top: 12px; line-height: 1.5; letter-spacing: 0.02em; }
 
 /* ---------- Problem ---------- */
 .dsf-problem-body { max-width: 680px; }
@@ -623,10 +604,7 @@ function scopedCss(): string {
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
   .dsf-section { padding: 88px 0; }
-  .dsf-hero { padding: 80px 0 56px; }
-  .dsf-hero-grid { grid-template-columns: 1fr; gap: 48px; }
-  .dsf-hero-right { justify-content: flex-start; }
-  .dsf-hero-aside { max-width: none; }
+  .dsf-hero { padding: 80px 0 64px; }
   .dsf-split { grid-template-columns: 1fr; gap: 24px; }
   .dsf-feature-grid { grid-template-columns: repeat(2, 1fr); gap: 40px 32px; }
   .dsf-testimonial-grid { grid-template-columns: 1fr; gap: 32px; }
