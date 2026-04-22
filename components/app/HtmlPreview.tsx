@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DeviceToggle, deviceWidth, type DeviceMode } from "./DeviceToggle";
 import {
@@ -8,6 +9,8 @@ import {
   ExternalLink,
   RefreshCw,
   Loader2,
+  Clipboard,
+  Check,
 } from "lucide-react";
 import { DeployButton } from "./DeployButton";
 
@@ -27,12 +30,14 @@ export function HtmlPreview({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [reloadKey, setReloadKey] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [copyPending, setCopyPending] = useState(false);
 
   const src = `/api/preview/${projectId}?t=${reloadKey}`;
+  const embedSrc = `/api/preview/${projectId}?embed=1&t=${reloadKey}`;
   const w = deviceWidth(device);
 
   const reload = () => setReloadKey(Date.now());
-
   const openNewTab = () => window.open(src, "_blank");
 
   const download = async () => {
@@ -45,6 +50,27 @@ export function HtmlPreview({
     a.download = `digistore-${projectId}.html`;
     a.click();
     URL.revokeObjectURL(url);
+    toast.success("HTML baixado (standalone)");
+  };
+
+  const copyEmbed = async () => {
+    if (copyPending) return;
+    setCopyPending(true);
+    try {
+      const res = await fetch(embedSrc);
+      if (!res.ok) throw new Error("fetch failed");
+      const html = await res.text();
+      await navigator.clipboard.writeText(html);
+      setCopied(true);
+      toast.success("HTML copiado — pronto pra colar no Atomicat", {
+        description: `${(html.length / 1024).toFixed(1)} KB · sem dependências CDN`,
+      });
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast.error("Falha ao copiar. Tente o Download.");
+    } finally {
+      setCopyPending(false);
+    }
   };
 
   return (
@@ -70,6 +96,22 @@ export function HtmlPreview({
             disabled={!hasHtml}
           >
             <Download className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={copyEmbed}
+            disabled={!hasHtml || copyPending}
+            className="ml-1"
+          >
+            {copyPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : copied ? (
+              <Check className="h-4 w-4 text-emerald-600" />
+            ) : (
+              <Clipboard className="h-4 w-4" />
+            )}
+            HTML para Atomicat
           </Button>
         </div>
         <div className="flex items-center gap-2">

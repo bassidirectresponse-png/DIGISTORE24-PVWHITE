@@ -159,12 +159,22 @@ export async function deployToNetlifyAction(
       where: { id: projectId, userId },
     });
     if (!project) return { ok: false, error: "Projeto não encontrado" };
-    if (!project.generatedHtml) {
+    if (!project.generatedCopy) {
       return { ok: false, error: "Gere a página primeiro" };
     }
+    const profile = await db.companyProfile.findUnique({ where: { userId } });
+    if (!profile) return { ok: false, error: "Perfil da empresa não preenchido" };
+    const copy = PageCopySchema.parse(JSON.parse(project.generatedCopy));
+    const freshHtml = renderHtml({
+      copy,
+      project,
+      companyProfile: profile,
+      legalTexts: buildLegalTexts(project, profile),
+      mode: "standalone",
+    });
     const slug = `${project.productName}-${project.id.slice(-6)}`;
     const result = await deployToNetlify(
-      project.generatedHtml,
+      freshHtml,
       user.netlifyToken,
       slug
     );
