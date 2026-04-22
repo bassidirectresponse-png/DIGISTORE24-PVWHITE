@@ -1,0 +1,11 @@
+[build]
+  command = "pnpm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# pnpm: allow Prisma postinstall scripts to run (generates the client).
+[build.environment]
+  PNPM_FLAGS = "--shamefully-hoist"
+  NEXT_TELEMETRY_DISABLED = "1"
